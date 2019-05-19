@@ -30,7 +30,7 @@ const testFunction = async () => {
       const page = await browser.newPage();
       let login = async () => {
         // login
-        await page.goto('https://facebook.com', {
+        await page.goto('https://www.facebook.com/groups/451398875419759/', {
           waitUntil: 'networkidle2'
         });
         await page.waitForSelector(ID.login);
@@ -44,15 +44,24 @@ const testFunction = async () => {
         await page.click("#loginbutton")
     
         console.log("login done");
+        
         await page.waitForNavigation();
       }
       await login();
       
-      await page.goto('https://www.facebook.com/groups/451398875419759/');
-    await page.click('a[class="_4-h7 _5qtn fbReactComposerAttachmentSelector_STATUS"]');
-    //   await page.waitFor('div[aria-label="Create a post"] a[aria-label="Insert an emoji"]');
-    //   await page.keyboard.type('test post');
-    //   await page.click('div[aria-label="Create a post"] button[type=submit]');
+      // await page.goto('https://www.facebook.com/groups/451398875419759/');
+      
+      await page.waitFor(3000);
+
+    // // await page.waitFor('a[class="_4-h7 _5qtn fbReactComposerAttachmentSelector_STATUS"]');
+    // // await page.waitForSelector('._4-h7 _5qtn fbReactComposerAttachmentSelector_STATUS', {"timeout": 180000});
+
+    await page.click('[data-testid="status-attachment-selector"]');
+    await sleep(500);
+    // //   await page.waitFor('div[aria-label="Create a post"] a[aria-label="Insert an emoji"]');
+      await page.keyboard.type('test jgyt jhg post 2');
+      await sleep(500);
+      await page.click('[data-testid="react-composer-post-button"]');
     console.log('finish')
 }
 
