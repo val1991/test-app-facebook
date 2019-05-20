@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const postRoutes = require('./routes/post');
 
 const app = express();
-const mongoPath = `mongodb+srv://val1991:David2005+@cluster0-cn6ti.mongodb.net/test?retryWrites=true`;
+const mongoPath = `mongodb+srv://val1991:David2005+@cluster0-cn6ti.mongodb.net/test?retryWrites=true`; // add own cluster
 
 mongoose.connect(
     mongoPath,
