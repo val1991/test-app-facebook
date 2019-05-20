@@ -16,7 +16,7 @@ router.get(
 
 router.delete(
     '/:id',
-    PostController.deletePlayer
+    PostController.deletePost
 )
 
 module.exports = router;

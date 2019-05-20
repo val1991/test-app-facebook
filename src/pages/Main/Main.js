@@ -9,7 +9,6 @@ import AddPostForm from '../../components/AddPostForm';
 const Main = (props) => {
     const { posts } = props;
     useEffect(() => {
-        console.log('useEffect');
         getAllPosts();
     }, []);
 
@@ -18,25 +17,23 @@ const Main = (props) => {
         await getAllPostsAction();
     }
 
-    const handleAddPost = async (values, setSubmitting) => {
+    const handleAddPost = async (values, setSubmitting, resetForm) => {
         const body = {
             user_name: values.name,
             post_text: values.text,
             post_date: values.date,
-            post_time: values.time,
         };
         const { addPostAction } = props;
         await addPostAction(body);
         setSubmitting(false);
+        resetForm();
     }
 
     const handleDeletePost = async (id) => {
-        console.log(id);
         const { deletePostAction } = props;
         await deletePostAction(id);
     }
 
-    console.log('posts ', posts);
     return (
         <div>
             <AddPostForm handleSubmit={handleAddPost}/>
@@ -46,8 +43,7 @@ const Main = (props) => {
                     {posts.map(post => (
                         <div key={post._id}>
                             <h3>Post text - {post.post_text}</h3>
-                            <h3>Post time - {post.post_time}</h3>
-                            <h3>Post date - {post.post_date}</h3>
+                            <h3>Post date - {new Date(post.post_date).toString()}</h3>
                             <h3>Name - {post.user_name}</h3>
                             <button onClick={() => handleDeletePost(post._id)}>Delete Post</button>
                         </div>

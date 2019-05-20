@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 const postRoutes = require('./routes/post');
 
 const app = express();
+const mongoPath = `mongodb+srv://val1991:David2005+@cluster0-cn6ti.mongodb.net/test?retryWrites=true`;
 
 mongoose.connect(
-    'mongodb+srv://val1991:David2005+@cluster0-cn6ti.mongodb.net/test?retryWrites=true',
+    mongoPath,
     { useNewUrlParser: true },
     )
   .then(() => {
@@ -19,7 +20,7 @@ mongoose.connect(
   
 app.use(bodyParser.json());
 
-app.use(bodyParser.urlencoded({ extended: false })); //not need, just example
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', "*");

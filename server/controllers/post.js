@@ -2,8 +2,6 @@ const puppeteer = require('puppeteer');
 
 const Post = require('../models/post');
 
-
-// TODO:
 const sleep = async (ms) => {
     return new Promise((res, rej) => {
       setTimeout(() => {
@@ -17,10 +15,10 @@ const ID = {
     pass: '#pass'
   };
 
-const CRED = {
-    user: "valerii.davydenko.9",
-    pass: "Daviddavidenko"
-}
+// const CRED = {
+//     user: process.env.CRED_USER,
+//     pass: process.env.CRED_PASSWORD
+// }
 
 const testFunction = async (textPost) => {
     const browser = await puppeteer.launch({
@@ -30,15 +28,14 @@ const testFunction = async (textPost) => {
       const page = await browser.newPage();
       let login = async () => {
         // login
-        await page.goto('https://www.facebook.com/groups/451398875419759/', {
+        await page.goto(`https://www.facebook.com/groups/${process.env.GROUP_ID}/`, {
           waitUntil: 'networkidle2'
         });
         await page.waitForSelector(ID.login);
-        console.log(CRED.user);
-        console.log(ID.login);
-        await page.type(ID.login, CRED.user);
+  
+        await page.type(ID.login, process.env.CRED_USER);
     
-        await page.type(ID.pass, CRED.pass);
+        await page.type(ID.pass, process.env.CRED_PASSWORD);
         await sleep(500);
     
         await page.click("#loginbutton")
@@ -60,10 +57,30 @@ const testFunction = async (textPost) => {
     await page.click('[data-testid="react-composer-post-button"]');
     await new Promise(res => setTimeout(res, 2000));
     await browser.close();
+    console.log("finish");
 }
 
+function startInterval(postId, countDownDate, text) {
+    let x = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = countDownDate - now;
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        console.log(days + "d " + hours + "h " + minutes + "m " + seconds + "s ");
 
-// TODO: 
+        if (distance < 0) {
+          clearInterval(x);
+          testFunction(text);
+          Post.deleteOne({ _id: postId })
+          .then(result => {
+            console.log('result  ', result);
+          })
+        }
+      }, 1000)
+}
 
   exports.getAllPosts = (req, res, next) => {
       const allPosts = Post.find();
@@ -85,31 +102,37 @@ const testFunction = async (textPost) => {
         user_name: req.body.user_name,
         post_text: req.body.post_text,
         post_date: req.body.post_date,
-        post_time: req.body.post_time,
     });
 
-
-    // testFunction(textPost) TODO: 
-
-
-
-    post.save().then(createdPost => {
-      res.status(201).json({
-        message: 'Post added successfuly',
-        post: {
-          ...createdPost,
-          id: createdPost._id,
-        }
-      })
-    })
-    .catch(err => {
-      res.status(500).json({
-        message: 'Creating a post failed!',
+    const countDownDate = new Date(req.body.post_date).getTime();
+    const now = new Date().getTime();
+    const distance = countDownDate - now;
+    if(distance < 0) {
+      console.log('send post now');
+      testFunction(req.body.post_text);
+      res.status(200).json({
+        message: 'Post send to facebook',
       });
-    });
+    } else {
+      post.save().then(createdPost => {
+        res.status(201).json({
+          message: 'Post added successfuly',
+          post: {
+            ...createdPost,
+            id: createdPost._id,
+          }
+        });
+        startInterval(createdPost._id, countDownDate, createdPost.post_text);
+      })
+      .catch(err => {
+        res.status(500).json({
+          message: 'Creating a post failed!',
+        });
+      });
+    }
   }
 
-  exports.deletePlayer = (req, res, next) => {
+  exports.deletePost = (req, res, next) => {
     Post.deleteOne({ _id: req.params.id })
     .then(result => {
         if (result.n > 0) {

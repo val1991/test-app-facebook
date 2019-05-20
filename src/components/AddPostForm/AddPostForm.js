@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import { Form } from 'reactstrap';
 
 import FieldInputComponent from '../FieldInputComponent';
+import DateTimePickerField from '../DateTimePickerField';
 import ButtonCustom from '../ButtonCustom';
 
 const playerSchema = yup.object().shape({
@@ -14,12 +15,6 @@ const playerSchema = yup.object().shape({
     text: yup  
         .string()
         .required("Text can't be empty"),
-    time: yup  
-        .string()
-        .required("Time can't be empty"),
-    date: yup  
-        .string()
-        .required("Date can't be empty"),
 });
 
 const AddPostForm = props => {
@@ -29,6 +24,9 @@ const AddPostForm = props => {
         isValid,
         touched,
         errors,
+        setFieldValue,
+        values,
+        setFieldError
     } = props;
     return (
         <Form className="add-player-form">
@@ -50,7 +48,19 @@ const AddPostForm = props => {
                 className="form-group"
                 classInput="form-input"
             />
-            <Field
+            <DateTimePickerField
+                name="date"
+                label="DateTimePicker"
+                variant="outlined"
+                setFieldValue={setFieldValue}
+                value={values.date}
+                formikError={errors.date}
+                setFieldError={setFieldError}
+                placeholder="Date of Birth (mm/dd/yyyy)"
+            />
+
+
+            {/* <Field
                 name="time"
                 component={FieldInputComponent}
                 error={touched.name && errors.name}
@@ -67,7 +77,7 @@ const AddPostForm = props => {
                 label="Date"
                 className="form-group"
                 classInput="form-input"
-            />
+            /> */}
             <div className="order-form__btn">
                 <ButtonCustom
                     className="order-form__btn_submit"
@@ -86,12 +96,11 @@ export default withFormik({
     mapPropsToValues: (props) => ({
       name: '',
       text: '',
-      time: '',
-      date: '',
+      date: new Date(),
     }),
     isInitialValid: false,
     validationSchema: playerSchema,
-    handleSubmit: async (values, { props, setSubmitting }) => {
-      await props.handleSubmit(values, setSubmitting);
+    handleSubmit: async (values, { props, setSubmitting, resetForm }) => {
+      await props.handleSubmit(values, setSubmitting, resetForm);
     },
   })(AddPostForm);

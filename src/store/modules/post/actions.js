@@ -8,7 +8,6 @@ import { Post } from './api';
 
 export const getAllPostsAction = () => async dispatch => {
     const response = await Post.getAllPosts();
-    console.log('response  getAllPostsAction', response);
     if (response.status === 200) {
         dispatch({
             type: GET_ALL_POSTS,
@@ -17,24 +16,25 @@ export const getAllPostsAction = () => async dispatch => {
     }
 };
 
-export const addPostAction = (body) => async dispatch => {
+export const addPostAction = (body) => async (dispatch, getState) => {
     const response = await Post.addPost(body);
-    console.log('response  addPostAction', response);
     if (response.status === 201) {
+        const { posts: { posts } } = getState();
         dispatch({
             type: CREATE_POST,
-            payload: response.data
+            payload: [...posts, response.data.post._doc]
         })
     }
 };
 
-export const deletePostAction = (id) => async dispatch => {
+export const deletePostAction = (id) => async (dispatch, getState) => {
     const response = await Post.deletePost(id);
-    console.log('response  deletePostAction', response);
     if (response.status === 200) {
+        const { posts: { posts } } = getState();
+        const newData = posts.filter(el => el._id !== id);
         dispatch({
             type: DELETE_POST,
-            id,
+            payload: newData,
         });
     };
 }

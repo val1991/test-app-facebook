@@ -10,13 +10,13 @@ let initialState = {
 
 export default (state = initialState, action) => {
     switch (action.type) {
+        case CREATE_POST:
+        case DELETE_POST:
         case GET_ALL_POSTS:
             return {
                 ...state,
                 posts: action.payload,
             }
-        case CREATE_POST:
-        case DELETE_POST:
         default:
             return state;
     }

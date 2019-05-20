@@ -9,7 +9,7 @@ export class Post {
                 data: response.data,
             }
         } catch (e) {
-            console.log('error getAllPosts', e);
+            console.error('error getAllPosts', e);
             return {
                 status: 'error getAllPosts',
             };
@@ -24,7 +24,7 @@ export class Post {
                 data: response.data,
             }
         } catch (e) {
-            console.log('error addPost', e);
+            console.error('error addPost', e);
             return {
                 status: 'error addPost',
             };
@@ -38,7 +38,7 @@ export class Post {
                 status: response.status,
             }
         } catch (e) {
-            console.log('error deletePost', e);
+            console.error('error deletePost', e);
             return {
                 status: 'error deletePost',
               };
