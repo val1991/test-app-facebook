@@ -22,7 +22,7 @@ const CRED = {
     pass: "Daviddavidenko"
 }
 
-const testFunction = async () => {
+const testFunction = async (textPost) => {
     const browser = await puppeteer.launch({
         headless: false,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -47,29 +47,25 @@ const testFunction = async () => {
         
         await page.waitForNavigation();
       }
-      await login();
+    await login();
       
-      // await page.goto('https://www.facebook.com/groups/451398875419759/');
-      
-      await page.waitFor(3000);
-
-    // // await page.waitFor('a[class="_4-h7 _5qtn fbReactComposerAttachmentSelector_STATUS"]');
-    // // await page.waitForSelector('._4-h7 _5qtn fbReactComposerAttachmentSelector_STATUS', {"timeout": 180000});
+    await page.waitFor(3000);
 
     await page.click('[data-testid="status-attachment-selector"]');
+    
+    await page.click('[data-testid="status-attachment-mentions-input"]');
     await sleep(500);
-    // //   await page.waitFor('div[aria-label="Create a post"] a[aria-label="Insert an emoji"]');
-      await page.keyboard.type('test jgyt jhg post 2');
-      await sleep(500);
-      await page.click('[data-testid="react-composer-post-button"]');
-    console.log('finish')
+    await page.keyboard.type(textPost);
+    await sleep(500);
+    await page.click('[data-testid="react-composer-post-button"]');
+    await new Promise(res => setTimeout(res, 2000));
+    await browser.close();
 }
 
 
 // TODO: 
 
   exports.getAllPosts = (req, res, next) => {
-        testFunction()
       const allPosts = Post.find();
       allPosts.then(posts => {
         res.status(200).json({
@@ -91,6 +87,12 @@ const testFunction = async () => {
         post_date: req.body.post_date,
         post_time: req.body.post_time,
     });
+
+
+    // testFunction(textPost) TODO: 
+
+
+
     post.save().then(createdPost => {
       res.status(201).json({
         message: 'Post added successfuly',
